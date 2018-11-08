@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
-class Anywayproject2ApplicationTests {
+class MainApplicationTests {
 
 
     @Autowired
