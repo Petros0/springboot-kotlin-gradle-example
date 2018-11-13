@@ -1,5 +1,6 @@
 package com.stergioulas.example.springboot.kotlin
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Test
@@ -21,13 +22,16 @@ class MainApplicationTests {
 
 
     @Autowired
-    lateinit var todoItemRepository: TodoItemRepository
+    private lateinit var todoItemRepository: TodoItemRepository
 
     @Autowired
-    lateinit var todoItemService: TodoItemService
+    private lateinit var todoItemService: TodoItemService
 
     @Autowired
-    lateinit var mvc: MockMvc
+    private lateinit var mvc: MockMvc
+
+    @Autowired
+    private lateinit var mapper: ObjectMapper
 
     @After
     fun `tear down`() {
@@ -118,8 +122,7 @@ class MainApplicationTests {
     }
 
     // controllers
-
-
+    
     @Test
     fun `should get all todos`() {
         val todoItem = TodoItem(null, "123", "456")
@@ -144,8 +147,9 @@ class MainApplicationTests {
     fun `save an todoitem`() {
         val todoItem = TodoItem(null, "123", "456")
 
-        mvc.perform(post("/api/todoItems/", todoItem)
-                .contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(post("/api/todoItems/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(todoItem)))
                 .andExpect(status().isOk)
     }
 
@@ -158,5 +162,9 @@ class MainApplicationTests {
         mvc.perform(delete("/api/todoItems/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent)
+    }
+
+    private fun asJsonString(any: Any): String {
+        return mapper.writeValueAsString(any)
     }
 }

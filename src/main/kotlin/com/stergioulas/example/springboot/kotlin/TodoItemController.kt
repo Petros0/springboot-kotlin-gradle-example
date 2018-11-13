@@ -16,12 +16,11 @@ class TodoItemController(
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long) = todoItemService.findById(id)
 
-
     @PostMapping
-    fun post(item: TodoItem) = todoItemService.save(item)
+    fun post(@RequestBody item: TodoItem) = todoItemService.save(item)
 
     @PutMapping
-    fun put(item: TodoItem) = todoItemService.save(item)
+    fun put(@RequestBody item: TodoItem) = todoItemService.save(item)
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
