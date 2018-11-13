@@ -5,12 +5,18 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@AutoConfigureMockMvc
 class MainApplicationTests {
 
 
@@ -20,9 +26,12 @@ class MainApplicationTests {
     @Autowired
     lateinit var todoItemService: TodoItemService
 
+    @Autowired
+    lateinit var mvc: MockMvc
+
     @After
     fun `tear down`() {
-        todoItemRepository.deleteAll();
+        todoItemRepository.deleteAll()
     }
 
     @Test
@@ -32,7 +41,6 @@ class MainApplicationTests {
 
     @Test
     fun `should save an item`() {
-
         val todoItem = TodoItem(null, "123", "456")
         val (id, _, _) = todoItemRepository.save(todoItem)
         assertTrue(id != null)
@@ -109,4 +117,46 @@ class MainApplicationTests {
         assertFalse(findById.isPresent)
     }
 
+    // controllers
+
+
+    @Test
+    fun `should get all todos`() {
+        val todoItem = TodoItem(null, "123", "456")
+        todoItemRepository.save(todoItem)
+
+        mvc.perform(get("/api/todoItems")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should get a todo by its id`() {
+        val todoItem = TodoItem(null, "123", "456")
+        val (id, _, _) = todoItemRepository.save(todoItem)
+
+        mvc.perform(get("/api/todoItems/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `save an todoitem`() {
+        val todoItem = TodoItem(null, "123", "456")
+
+        mvc.perform(post("/api/todoItems/", todoItem)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `delete an todoitem`() {
+        val todoItem = TodoItem(null, "123", "456")
+
+        val (id, _, _) = todoItemRepository.save(todoItem)
+
+        mvc.perform(delete("/api/todoItems/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent)
+    }
 }
