@@ -46,7 +46,7 @@ class MainApplicationTests {
     @Test
     fun `should save an item`() {
         val todoItem = TodoItem(null, "123", "456")
-        val (id, _, _) = todoItemRepository.save(todoItem)
+        val (_, _, id) = todoItemRepository.save(todoItem)
         assertTrue(id != null)
     }
 
@@ -54,10 +54,10 @@ class MainApplicationTests {
     fun `should update an item`() {
 
         val todoItem = TodoItem(null, "123", "456")
-        val (id, label, _) = todoItemRepository.save(todoItem)
+        val (label, _, id) = todoItemRepository.save(todoItem)
 
         todoItem.label = "changed"
-        val (id2, label2, _) = todoItemRepository.save(todoItem)
+        val (label2, _, id2) = todoItemRepository.save(todoItem)
 
         assertTrue(id == id2)
         assertEquals("changed", label2)
@@ -68,7 +68,7 @@ class MainApplicationTests {
     @Test
     fun `should delete an item`() {
         val todoItem = TodoItem(null, "123", "456")
-        val (id, _, _) = todoItemRepository.save(todoItem)
+        val (_, _, id) = todoItemRepository.save(todoItem)
         todoItemRepository.deleteById(id!!)
 
 
@@ -93,7 +93,7 @@ class MainApplicationTests {
     fun `should find an item based on the id`() {
         val todoItem = TodoItem(null, "123", "456")
 
-        val (id, _, _) = todoItemRepository.save(todoItem)
+        val (_, _, id) = todoItemRepository.save(todoItem)
 
         val findById = todoItemService.findById(id!!)
 
@@ -105,13 +105,13 @@ class MainApplicationTests {
         val todoItem = TodoItem(null, "123", "456")
 
         val save = todoItemService.save(todoItem)
-        assertTrue(save.id != null)
+        assertTrue(save.getId() != null)
     }
 
     @Test
     fun `should delete an item with the service`() {
         val todoItem = TodoItem(null, "123", "456")
-        val (id, _, _) = todoItemRepository.save(todoItem)
+        val (_, _, id) = todoItemRepository.save(todoItem)
 
 
         todoItemService.delete(id!!)
@@ -136,7 +136,7 @@ class MainApplicationTests {
     @Test
     fun `should get a todo by its id`() {
         val todoItem = TodoItem(null, "123", "456")
-        val (id, _, _) = todoItemRepository.save(todoItem)
+        val (_, _, id) = todoItemRepository.save(todoItem)
 
         mvc.perform(get("/api/todoItems/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -157,7 +157,7 @@ class MainApplicationTests {
     fun `delete an todoitem`() {
         val todoItem = TodoItem(null, "123", "456")
 
-        val (id, _, _) = todoItemRepository.save(todoItem)
+        val (_, _, id) = todoItemRepository.save(todoItem)
 
         mvc.perform(delete("/api/todoItems/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON))

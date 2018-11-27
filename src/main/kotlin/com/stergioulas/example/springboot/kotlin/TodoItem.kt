@@ -1,13 +1,16 @@
 package com.stergioulas.example.springboot.kotlin
 
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
 
 @Entity
 data class TodoItem(
-        @Id @GeneratedValue
-        var id: Long?,
         var label: String,
         var text: String
-)
+) : AbstractIdPersistable<Long?>() {
+
+    constructor(id: Long?, label: String, text: String) : this(label, text) {
+        super.setId(id)
+    }
+
+    operator fun component3(): Long? = super.getId()
+}
